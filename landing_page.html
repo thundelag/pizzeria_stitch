@@ -12,6 +12,46 @@
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+      const supabaseUrl = 'https://lmvubnduwbrzidowxlmn.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtdnVibmR1d2Jyemlkb3d4bG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5MTg5OTgsImV4cCI6MjA2MzQ5NDk5OH0.3ZIww_-JupqUE95Jv4GTAbwnB4EgpZ7m9bA7V8FUhuI';
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const loginButton = document.getElementById('loginButton');
+        loginButton.addEventListener('click', async () => {
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          if (!email || !password) {
+            alert('Please enter both email and password.');
+            return;
+          }
+
+          try {
+            const { data, error } = await supabase
+              .from('utenti')
+              .select()
+              .eq('mail', email)
+              .eq('password', password);
+
+            if (error) {
+              throw error;
+            }
+
+            if (data && data.length > 0) {
+              window.location.href = 'logged_in.html';
+            } else {
+              alert('Invalid credentials');
+            }
+          } catch (error) {
+            console.error('Login error:', error);
+            alert('An error occurred during login. Please try again.');
+          }
+        });
+      });
+    </script>
   </head>
   <body>
     <div class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden" style='font-family: "Be Vietnam Pro", "Noto Sans", sans-serif;'>
@@ -22,6 +62,7 @@
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
                 <input
+                  id="email"
                   placeholder="Email or phone number"
                   class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d131c] focus:outline-0 focus:ring-0 border-none bg-[#e7ecf3] focus:border-none h-14 placeholder:text-[#4b6d9b] p-4 text-base font-normal leading-normal"
                   value=""
@@ -31,6 +72,8 @@
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
                 <input
+                  id="password"
+                  type="password"
                   placeholder="Password"
                   class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d131c] focus:outline-0 focus:ring-0 border-none bg-[#e7ecf3] focus:border-none h-14 placeholder:text-[#4b6d9b] p-4 text-base font-normal leading-normal"
                   value=""
@@ -39,6 +82,7 @@
             </div>
             <div class="flex px-4 py-3">
               <button
+                id="loginButton"
                 class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 flex-1 bg-[#1776f1] text-slate-50 text-sm font-bold leading-normal tracking-[0.015em]"
               >
                 <span class="truncate">Log In</span>
